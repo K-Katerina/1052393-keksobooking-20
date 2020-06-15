@@ -9,6 +9,9 @@ var BLOCK_HEIGHT = 500;
 var NUMBER_OF_PINS = 8;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
+var MAIN_PIN_WIDTH = 65;
+var MAIN_PIN_HEIGHT = 65;
+var MAIN_ARROW_HEIGHT = 18;
 
 var getRandomNumberOfRange = function (a, b) {
   return Math.round(a + Math.random() * (b - a));
@@ -53,6 +56,21 @@ var getRandomArray = function (array) {
   return shuffle(array).slice(0, getRandomNumberOfRange(0, array.length));
 };
 
+var randomNumber = getRandomNumberOfRange(1, NUMBER_OF_PINS);
+
+var getWordForm = function (n, array) {
+  var modN = n % 10;
+  if (n > 10 && n < 21) {
+    return n + ' ' + array[2];
+  } else if (modN > 1 && modN < 5) {
+    return n + ' ' + array[1];
+  } else if (modN === 1) {
+    return n + ' ' + array[0];
+  } else {
+    return n + ' ' + array[2];
+  }
+};
+
 var createAdvertisement = function (i) {
   var location = {
     x: getRandomNumberOfRange(getBlockCoordinateX(), getBlockCoordinateX() + getBlockWidth()),
@@ -60,7 +78,7 @@ var createAdvertisement = function (i) {
   };
   return {
     author: {
-      avatar: getAvatar(i)
+      avatar: getAvatar((i + randomNumber) % NUMBER_OF_PINS)
     },
     offer: {
       title: 'Объявление №' + (i + 1),
@@ -139,7 +157,7 @@ var renderCard = function (cardItem) {
   card.querySelector('.popup__text--address').textContent = cardItem.offer.address;
   card.querySelector('.popup__text--price').textContent = cardItem.offer.price + '₽/ночь';
   card.querySelector('.popup__type').textContent = translationToRu[cardItem.offer.type];
-  card.querySelector('.popup__text--capacity').textContent = cardItem.offer.rooms + ' комнаты для ' + cardItem.offer.guests + ' гостей';
+  card.querySelector('.popup__text--capacity').textContent = getWordForm(cardItem.offer.rooms, ['комната', 'комнаты', 'комнат']) + ' для ' + getWordForm(cardItem.offer.guests, ['гостя', 'гостей', 'гостей']);
   card.querySelector('.popup__text--time').textContent = 'Заезд после ' + cardItem.offer.checkin + ', выезд до ' + cardItem.offer.checkout;
   card.querySelector('.popup__features').textContent = getFeaturesToString(cardItem.offer.features);
   card.querySelector('.popup__description').textContent = cardItem.offer.description;
@@ -151,3 +169,123 @@ var renderCard = function (cardItem) {
 
 var cardItem = advertisementList[0];
 document.querySelector('.map').insertBefore(renderCard(cardItem), document.querySelector('.map__filters-container'));
+
+//  [Дез]активация форм ввода
+
+var setDisabledForAll = function (array, disabled) {
+  for (var i = 0; i < array.length; i++) {
+    array[i].disabled = disabled;
+  }
+};
+
+var setActivityStatusAdForm = function (active) {
+  var adForm = document.querySelector('.ad-form');
+  adForm.classList.add('ad-form--disabled');
+  if (active) {
+    adForm.classList.remove('ad-form--disabled');
+  }
+  var childrenAdForm = adForm.children;
+  setDisabledForAll(childrenAdForm, !active);
+};
+
+var setActivityStatusAdMapFiltres = function (active) {
+  var childrenMapFiltres = document.querySelector('.map__filters').children;
+  setDisabledForAll(childrenMapFiltres, !active);
+};
+
+var setActivityStatus = function (active) {
+  setActivityStatusAdForm(active);
+  setActivityStatusAdMapFiltres(active);
+};
+
+var setAddress = function (coordinateX, coordinateY) {
+  var address = document.querySelector('#address');
+  address.value = coordinateX + ' , ' + coordinateY;
+};
+
+setActivityStatus(false);
+
+var mapPin = document.querySelector('.map__pin--main');
+setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT / 2);
+
+mapPin.addEventListener('mousedown', function (evt) {
+  if (evt.button === 0) {
+    setActivityStatus(true);
+    setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT + MAIN_ARROW_HEIGHT);
+  }
+});
+
+mapPin.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Enter') {
+    setActivityStatus(true);
+    setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT + MAIN_ARROW_HEIGHT);
+  }
+});
+
+// Обработка селекторов для квартир и гостей
+
+var dictionaryCapacities = [
+  {
+    id: 1,
+    text: 'для 1 гостя'
+  },
+  {
+    id: 2,
+    text: 'для 2 гостей'
+  },
+  {
+    id: 3,
+    text: 'для 3 гостей'
+  },
+  {
+    id: 0,
+    text: 'не для гостей'
+  }
+];
+
+var mapRooms = {
+  1: [dictionaryCapacities[0]],
+  2: [dictionaryCapacities[1], dictionaryCapacities[0]],
+  3: [dictionaryCapacities[2], dictionaryCapacities[1], dictionaryCapacities[0]],
+  100: [dictionaryCapacities[3]]
+};
+
+var roomSelect = document.querySelector('#room_number');
+var capacitySelect = document.querySelector('#capacity');
+
+
+var changeHandler = function (evt) {
+  fillCapasity(evt.target.value);
+  capacitySelect.value = null;
+};
+
+var fillRoomsAndCapacities = function () {
+  var optionForRoomSelect = '';
+  for (var room in mapRooms) {
+    if (mapRooms.hasOwnProperty(room)) {
+      optionForRoomSelect += '<option value="' + room + '">' + getWordForm(room, ['комната', 'комнаты', 'комнат']) + '</option>';
+    }
+  }
+  roomSelect.innerHTML = optionForRoomSelect;
+  roomSelect.addEventListener('change', changeHandler);
+};
+
+var fillCapasity = function (room) {
+  var capacities = mapRooms[room];
+  var optionForCapacitySelect = '';
+  for (var i = 0; i < capacities.length; i++) {
+    optionForCapacitySelect += '<option value="' + capacities[i].id + '">' + capacities[i].text + '</option>';
+  }
+  capacitySelect.innerHTML = optionForCapacitySelect;
+};
+
+fillRoomsAndCapacities();
+fillCapasity(document.querySelector('#room_number option').value);
+
+capacitySelect.addEventListener('invalid', function () {
+  if (capacitySelect.validity.valueMissing) {
+    capacitySelect.setCustomValidity('Обязательное поле');
+  } else {
+    capacitySelect.setCustomValidity('');
+  }
+});

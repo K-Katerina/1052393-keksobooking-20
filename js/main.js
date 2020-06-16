@@ -12,6 +12,14 @@ var PIN_HEIGHT = 70;
 var MAIN_PIN_WIDTH = 65;
 var MAIN_PIN_HEIGHT = 65;
 var MAIN_ARROW_HEIGHT = 18;
+var ONE_GUEST = 0;
+var TWO_GUESTS = 1;
+var THREE_GUESTS = 2;
+var NO_GUESTS = 3;
+var ONE_ROOM = 1;
+var TWO_ROOMS = 2;
+var THREE_ROOMS = 3;
+var HUNDRED_ROOMS = 100;
 
 var getRandomNumberOfRange = function (a, b) {
   return Math.round(a + Math.random() * (b - a));
@@ -230,7 +238,13 @@ var setActivityStatus = function (active) {
   setActivityStatusAdForm(active);
   setActivityStatusAdMapFiltres(active);
   setActivityMap(active);
+  if (active) {
+    mapPin.removeEventListener('keydown', pressEnterKey);
+    mapPin.removeEventListener('mousedown', pressLeftKeyMouse);
+  }
 };
+
+var mapPin = document.querySelector('.map__pin--main');
 
 setActivityStatus(false);
 
@@ -239,57 +253,59 @@ var setAddress = function (coordinateX, coordinateY) {
   address.value = coordinateX + ' , ' + coordinateY;
 };
 
-var mapPin = document.querySelector('.map__pin--main');
 setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT / 2);
 
-mapPin.addEventListener('mousedown', function (evt) {
+var pressLeftKeyMouse = function (evt) {
   if (evt.button === 0) {
     setActivityStatus(true);
     setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT + MAIN_ARROW_HEIGHT);
   }
-});
+};
 
-mapPin.addEventListener('keydown', function (evt) {
-  if (evt.key === 'Enter') {
+mapPin.addEventListener('mousedown', pressLeftKeyMouse);
+
+var pressEnterKey = function (evt) {
+  if (evt.button === 0) {
     setActivityStatus(true);
     setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT + MAIN_ARROW_HEIGHT);
   }
-});
+};
+
+mapPin.addEventListener('keydown', pressEnterKey);
 
 // Обработка селекторов для квартир и гостей
 
 var dictionaryCapacities = [
   {
-    id: 1,
+    id: ONE_GUEST,
     text: 'для 1 гостя'
   },
   {
-    id: 2,
+    id: TWO_GUESTS,
     text: 'для 2 гостей'
   },
   {
-    id: 3,
+    id: THREE_GUESTS,
     text: 'для 3 гостей'
   },
   {
-    id: 0,
+    id: NO_GUESTS,
     text: 'не для гостей'
   }
 ];
 
-var mapRooms = {
-  1: [dictionaryCapacities[0]],
-  2: [dictionaryCapacities[1], dictionaryCapacities[0]],
-  3: [dictionaryCapacities[2], dictionaryCapacities[1], dictionaryCapacities[0]],
-  100: [dictionaryCapacities[3]]
-};
+var mapRooms = {};
+mapRooms[ONE_ROOM] = [dictionaryCapacities[ONE_GUEST]];
+mapRooms[TWO_ROOMS] = [dictionaryCapacities[TWO_GUESTS], dictionaryCapacities[ONE_GUEST]];
+mapRooms[THREE_ROOMS] = [dictionaryCapacities[THREE_GUESTS], dictionaryCapacities[TWO_GUESTS], dictionaryCapacities[ONE_GUEST]];
+mapRooms[HUNDRED_ROOMS] = [dictionaryCapacities[NO_GUESTS]];
 
 var roomSelect = document.querySelector('#room_number');
 var capacitySelect = document.querySelector('#capacity');
 
 var changeHandler = function (evt) {
   fillCapacity(evt.target.value);
-  capacitySelect.value = null;
+  // capacitySelect.value = null;
 };
 
 var fillRoomsAndCapacities = function () {

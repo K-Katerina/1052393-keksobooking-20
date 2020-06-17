@@ -1,7 +1,12 @@
 'use strict';
 
 var PHOTO_LIST = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
-var BUILDING_TYPE_LIST = ['palace', 'flat', 'house', 'bungalo'];
+var BUILDING_MAP = {
+  'palace': 10000,
+  'flat': 1000,
+  'house': 5000,
+  'bungalo': 0
+};
 var CHECK_TIME_LIST = ['12:00', '13:00', '14:00'];
 var FEATURE_LIST = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var BLOCK_COORDINATE_Y = 130;
@@ -20,6 +25,11 @@ var ONE_ROOM = 1;
 var TWO_ROOMS = 2;
 var THREE_ROOMS = 3;
 var HUNDRED_ROOMS = 100;
+var DEFAULT_MIN_PRICE = 1000;
+
+var MIN_TITLE_LENGTH = 30;
+var MAX_TITLE_LENGTH = 100;
+var MAX_PRICE = 1000000;
 
 var getRandomNumberOfRange = function (a, b) {
   return Math.round(a + Math.random() * (b - a));
@@ -84,6 +94,7 @@ var createAdvertisement = function (i) {
     x: getRandomNumberOfRange(getBlockCoordinateX(), getBlockCoordinateX() + getBlockWidth()),
     y: getRandomNumberOfRange(BLOCK_COORDINATE_Y, BLOCK_COORDINATE_Y + BLOCK_HEIGHT),
   };
+  var types = Object.keys(BUILDING_MAP);
   return {
     author: {
       avatar: getAvatar((i + randomNumber) % NUMBER_OF_PINS)
@@ -92,7 +103,7 @@ var createAdvertisement = function (i) {
       title: 'Объявление №' + (i + 1),
       address: location.x + ', ' + location.y,
       price: getRandomNumberOfRange(100, 1000),
-      type: BUILDING_TYPE_LIST[getRandomNumberOfRange(0, BUILDING_TYPE_LIST.length - 1)],
+      type: types[getRandomNumberOfRange(0, types.length - 1)],
       rooms: getRandomNumberOfRange(1, 10),
       guests: getRandomNumberOfRange(1, 10),
       checkin: CHECK_TIME_LIST[getRandomNumberOfRange(0, CHECK_TIME_LIST.length - 1)],
@@ -123,6 +134,15 @@ var renderAdvertisement = function (advertisementItem) {
   advertisement.querySelector('img').src = advertisementItem.author.avatar;
   advertisement.querySelector('img').alt = advertisementItem.title;
 
+  var mapPinClickHandler = function () {
+    var mapCardRemovable = map.querySelector('.map__card');
+    if (mapCardRemovable) {
+      mapCardRemovable.remove();
+    }
+    publicCard(advertisementItem);
+  };
+
+  advertisement.addEventListener('click', mapPinClickHandler);
   return advertisement;
 };
 
@@ -135,7 +155,6 @@ var publicAdvertisementsOnMap = function () {
   for (var i = 0; i < advertisementList.length; i++) {
     fragment.appendChild(renderAdvertisement(advertisementList[i]));
   }
-
   similarListElement.appendChild(fragment);
 };
 
@@ -189,9 +208,29 @@ var renderCard = function (cardItem) {
 
 var map = document.querySelector('.map');
 
-var publicCard = function () {
-  var cardItem = advertisementList[0];
-  map.insertBefore(renderCard(cardItem), document.querySelector('.map__filters-container'));
+var publicCard = function (cardItem) {
+  var card = renderCard(cardItem);
+  map.insertBefore(card, document.querySelector('.map__filters-container'));
+
+  var closeBtnClickHandler = function () {
+    closeCard();
+  };
+
+  var escDownHandler = function (evt) {
+    if (evt.key === 'Escape') {
+      closeCard();
+    }
+  };
+
+  var closeCardBtn = card.querySelector('.popup__close');
+  closeCardBtn.addEventListener('click', closeBtnClickHandler);
+  document.addEventListener('keydown', escDownHandler);
+
+  var closeCard = function () {
+    card.remove();
+    closeCardBtn.removeEventListener('click', closeBtnClickHandler);
+    document.removeEventListener('keydown', escDownHandler);
+  };
 };
 
 var removeCard = function () {
@@ -229,7 +268,6 @@ var setActivityMap = function (active) {
   removeCard();
   if (active) {
     publicAdvertisementsOnMap();
-    publicCard();
     map.classList.remove('map--faded');
   }
 };
@@ -239,39 +277,28 @@ var setActivityStatus = function (active) {
   setActivityStatusAdMapFiltres(active);
   setActivityMap(active);
   if (active) {
-    mapPin.removeEventListener('keydown', pressEnterKey);
-    mapPin.removeEventListener('mousedown', pressLeftKeyMouse);
+    mapPin.removeEventListener('click', mainMapPinClickHandler);
   }
 };
 
-var mapPin = document.querySelector('.map__pin--main');
+var mapPin = similarListElement.querySelector('.map__pin--main');
 
 setActivityStatus(false);
 
 var setAddress = function (coordinateX, coordinateY) {
-  var address = document.querySelector('#address');
-  address.value = coordinateX + ' , ' + coordinateY;
+  var addressInput = document.querySelector('#address');
+  addressInput.value = coordinateX + ' , ' + coordinateY;
 };
 
 setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT / 2);
 
-var pressLeftKeyMouse = function (evt) {
-  if (evt.button === 0) {
-    setActivityStatus(true);
-    setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT + MAIN_ARROW_HEIGHT);
-  }
+var mainMapPinClickHandler = function () {
+  setActivityStatus(true);
+  setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT + MAIN_ARROW_HEIGHT);
+
 };
 
-mapPin.addEventListener('mousedown', pressLeftKeyMouse);
-
-var pressEnterKey = function (evt) {
-  if (evt.button === 0) {
-    setActivityStatus(true);
-    setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT + MAIN_ARROW_HEIGHT);
-  }
-};
-
-mapPin.addEventListener('keydown', pressEnterKey);
+mapPin.addEventListener('click', mainMapPinClickHandler);
 
 // Обработка селекторов для квартир и гостей
 
@@ -338,3 +365,104 @@ capacitySelect.addEventListener('invalid', function () {
     capacitySelect.setCustomValidity('');
   }
 });
+
+// Обработка ввода формы
+
+var adForm = document.querySelector('.ad-form');
+var titleInput = adForm.querySelector('#title');
+var priceInput = adForm.querySelector('#price');
+var typeInput = adForm.querySelector('#type');
+var timeInInput = adForm.querySelector('#timein');
+var timeOutInput = adForm.querySelector('#timeout');
+var avatarChooser = document.querySelector('#avatar');
+var imageChooser = document.querySelector('#images');
+var submitBtn = document.querySelector('.ad-form__submit');
+
+priceInput.value = DEFAULT_MIN_PRICE;
+
+var titleChangeHandler = function () {
+  var valueLength = titleInput.value.length;
+  if (valueLength < MIN_TITLE_LENGTH) {
+    titleInput.setCustomValidity('Минимальное количество символов - ' + MIN_TITLE_LENGTH);
+  } else if (valueLength > MAX_TITLE_LENGTH) {
+    titleInput.setCustomValidity('Минимальное количество символов - ' + MAX_TITLE_LENGTH);
+  } else {
+    titleInput.setCustomValidity('');
+  }
+};
+
+var priceChangeHandler = function () {
+  var value = priceInput.value;
+  priceInput.min = getMinPrice(typeInput.value);
+  if (value > MAX_PRICE) {
+    priceInput.setCustomValidity('Максимальная цена за ночь - ' + MAX_PRICE);
+  } else if (value < priceInput.min) {
+    priceInput.setCustomValidity('Минимальная цена за ночь для типа "' + translationToRu[typeInput.value] + '" - ' + priceInput.min);
+  } else {
+    priceInput.setCustomValidity('');
+  }
+};
+
+var getMinPrice = function (value) {
+  return BUILDING_MAP[value];
+};
+
+var typeChangeHandler = function () {
+  var minPrice = getMinPrice(typeInput.value);
+  priceInput.value = '';
+  priceInput.placeholder = minPrice.toString();
+  priceInput.min = minPrice;
+};
+
+var timeInChangeHandler = function () {
+  if (timeInInput.value !== timeOutInput.value) {
+    timeOutInput.value = timeInInput.value;
+  }
+};
+
+var timeOutChangeHandler = function () {
+  if (timeOutInput.value !== timeInInput.value) {
+    timeInInput.value = timeOutInput.value;
+  }
+};
+
+var avatarChangeHandler = function () {
+  if (avatarChooser.files[0].type !== 'image/jpeg') {
+    avatarChooser.setCustomValidity('Загрузите изображение');
+  }
+};
+
+var imageChangeHandler = function () {
+  if (imageChooser.files[0].type !== 'image/jpeg') {
+    imageChooser.setCustomValidity('Загрузите изображение');
+  }
+};
+
+var btnSubmitHandler = function () {
+  event.preventDefault();
+  removeFormListeners();
+};
+
+var addFormListeners = function () {
+  titleInput.addEventListener('change', titleChangeHandler);
+  priceInput.addEventListener('change', priceChangeHandler);
+  typeInput.addEventListener('change', typeChangeHandler);
+  timeInInput.addEventListener('change', timeInChangeHandler);
+  timeOutInput.addEventListener('change', timeOutChangeHandler);
+  avatarChooser.addEventListener('change', avatarChangeHandler);
+  imageChooser.addEventListener('change', imageChangeHandler);
+  submitBtn.addEventListener('submit', btnSubmitHandler);
+};
+
+var removeFormListeners = function () {
+  titleInput.removeEventListener('change', titleChangeHandler);
+  priceInput.removeEventListener('change', priceChangeHandler);
+  typeInput.removeEventListener('change', typeChangeHandler);
+  timeInInput.removeEventListener('change', timeInChangeHandler);
+  timeOutInput.removeEventListener('change', timeOutChangeHandler);
+  avatarChooser.removeEventListener('change', avatarChangeHandler);
+  imageChooser.removeEventListener('change', imageChangeHandler);
+  submitBtn.removeEventListener('click', btnSubmitHandler);
+};
+
+addFormListeners();

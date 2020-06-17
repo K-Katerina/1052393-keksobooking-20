@@ -25,6 +25,7 @@ var ONE_ROOM = 1;
 var TWO_ROOMS = 2;
 var THREE_ROOMS = 3;
 var HUNDRED_ROOMS = 100;
+var DEFAULT_MIN_PRICE = 1000;
 
 var MIN_TITLE_LENGTH = 30;
 var MAX_TITLE_LENGTH = 100;
@@ -377,6 +378,8 @@ var avatarChooser = document.querySelector('#avatar');
 var imageChooser = document.querySelector('#images');
 var submitBtn = document.querySelector('.ad-form__submit');
 
+priceInput.value = DEFAULT_MIN_PRICE;
+
 var titleChangeHandler = function () {
   var valueLength = titleInput.value.length;
   if (valueLength < MIN_TITLE_LENGTH) {
@@ -390,12 +393,11 @@ var titleChangeHandler = function () {
 
 var priceChangeHandler = function () {
   var value = priceInput.value;
-  var minPrice = getMinPrice(typeInput.value);
-  priceInput.min = minPrice;
+  priceInput.min = getMinPrice(typeInput.value);
   if (value > MAX_PRICE) {
     priceInput.setCustomValidity('Максимальная цена за ночь - ' + MAX_PRICE);
   } else if (value < priceInput.min) {
-    priceInput.setCustomValidity('Минимальная цена за ночь для типа ' + '{{type}}' + ' - ' + priceInput.min);
+    priceInput.setCustomValidity('Минимальная цена за ночь для типа "' + translationToRu[typeInput.value] + '" - ' + priceInput.min);
   } else {
     priceInput.setCustomValidity('');
   }
@@ -407,6 +409,7 @@ var getMinPrice = function (value) {
 
 var typeChangeHandler = function () {
   var minPrice = getMinPrice(typeInput.value);
+  priceInput.value = '';
   priceInput.placeholder = minPrice.toString();
   priceInput.min = minPrice;
 };

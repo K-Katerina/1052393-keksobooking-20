@@ -17,17 +17,11 @@
   };
 
   var mapPins = document.querySelector('.map__pins');
-  var body = document.querySelector('body');
-
-  var getBlockCoordinateX = function () {
-    return Number.parseInt(getComputedStyle(body).marginLeft, RADIX);
-  };
 
   var getBlockWidth = function () {
     return Number.parseInt(getComputedStyle(mapPins).width, RADIX);
   };
 
-  var blockCoordinateX = getBlockCoordinateX();
   var blockWidth = getBlockWidth();
 
   var getAvatar = function (i) {
@@ -36,8 +30,8 @@
 
   var createAdvertisement = function (i) {
     var location = {
-      x: window.utils.getRandomNumberOfRange(blockCoordinateX, blockCoordinateX + blockWidth),
-      y: window.utils.getRandomNumberOfRange(BLOCK_COORDINATE_Y, BLOCK_COORDINATE_Y + BLOCK_HEIGHT),
+      x: window.utils.getRandomNumberOfRange(0, blockWidth),
+      y: BLOCK_COORDINATE_Y + window.utils.getRandomNumberOfRange(0, BLOCK_HEIGHT),
     };
     var types = Object.keys(BUILDING_MAP);
 
@@ -72,6 +66,9 @@
 
   window.data = {
     BUILDING_MAP: BUILDING_MAP,
-    getAdvertisementList: getAdvertisementList
+    getAdvertisementList: getAdvertisementList,
+    blockWidth: blockWidth,
+    BLOCK_COORDINATE_Y: BLOCK_COORDINATE_Y,
+    BLOCK_HEIGHT: BLOCK_HEIGHT
   };
 })();

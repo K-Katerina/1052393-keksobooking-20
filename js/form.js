@@ -80,7 +80,7 @@
   };
 
   var getMinPrice = function (value) {
-    return window.data.BUILDING_MAP[value];
+    return window.utils.BUILDING_MAP[value];
   };
 
   var typeChangeHandler = function () {

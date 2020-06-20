@@ -72,7 +72,12 @@
 
   var mainMapPinEnterHandler = function (evt) {
     if (evt.key === 'Enter') {
-      setActivityStatus();
+
+      if (!isActive) {
+        isActive = true;
+        setActivityStatus();
+      }
+
       setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT + MAIN_ARROW_HEIGHT);
     }
   };
@@ -110,10 +115,10 @@
         };
 
         var limit = {
-          TOP: window.data.BLOCK_COORDINATE_Y - mapPin.offsetHeight - MAIN_ARROW_HEIGHT,
-          BOTTOM: window.data.BLOCK_HEIGHT + MAIN_ARROW_HEIGHT,
+          TOP: window.map.BLOCK_COORDINATE_Y - mapPin.offsetHeight - MAIN_ARROW_HEIGHT,
+          BOTTOM: window.map.BLOCK_HEIGHT + MAIN_ARROW_HEIGHT,
           LEFT: -HALF_MAIN_PIN_WIDTH,
-          RIGHT: window.data.blockWidth - mapPin.offsetWidth + HALF_MAIN_PIN_WIDTH
+          RIGHT: window.map.blockWidth - mapPin.offsetWidth + HALF_MAIN_PIN_WIDTH
         };
 
         if (mapPinPosition.x > limit.LEFT && mapPinPosition.x < limit.RIGHT) {
@@ -144,8 +149,8 @@
   mapPin.addEventListener('mousedown', mainMapPinLeftKeyDownMouseHandler);
 
   window.main = {
-    mainMapPinRemoveListener: mainMapPinRemoveListener,
     isActive: isActive,
+    mainMapPinRemoveListener: mainMapPinRemoveListener,
     setActivityStatus: setActivityStatus
   };
 })();

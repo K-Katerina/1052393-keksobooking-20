@@ -2,11 +2,26 @@
 
 (function () {
 
+  var BLOCK_COORDINATE_Y = 130;
+  var BLOCK_HEIGHT = 500;
+  var RADIX = 10;
+
   var similarListElement = document.querySelector('.map__pins');
+
+  var getBlockWidth = function () {
+    return Number.parseInt(getComputedStyle(similarListElement).width, RADIX);
+
+  };
+  var blockWidth = getBlockWidth();
+
+  var URL = 'https://javascript.pages.academy/keksobooking/data';
   var advertisementList = [];
 
+  window.server.get(URL, function (evt) {
+    advertisementList = evt.target.response;
+  });
+
   var publicAdvertisementsOnMap = function () {
-    advertisementList = window.data.getAdvertisementList();
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < advertisementList.length; i++) {
       fragment.appendChild(window.pin.renderMapPin(advertisementList[i]));
@@ -56,6 +71,9 @@
   };
 
   window.map = {
+    BLOCK_COORDINATE_Y: BLOCK_COORDINATE_Y,
+    BLOCK_HEIGHT: BLOCK_HEIGHT,
+    blockWidth: blockWidth,
     publicAdvertisementsOnMap: publicAdvertisementsOnMap,
     removeAdvertisementsOnMap: removeAdvertisementsOnMap,
     publicCardOnMap: publicCardOnMap,

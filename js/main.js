@@ -44,7 +44,6 @@
       map.classList.remove('map--faded');
       window.map.publicAdvertisementsOnMap();
     } else {
-      isActive = false;
       window.map.removeAdvertisementsOnMap();
     }
   };
@@ -145,6 +144,8 @@
   mapPin.addEventListener('mousedown', mainMapPinLeftKeyDownMouseHandler);
 
   window.main = {
-    mainMapPinRemoveListener: mainMapPinRemoveListener
+    mainMapPinRemoveListener: mainMapPinRemoveListener,
+    isActive: isActive,
+    setActivityStatus: setActivityStatus
   };
 })();

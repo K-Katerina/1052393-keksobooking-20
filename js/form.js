@@ -117,6 +117,8 @@
   var btnSubmitHandler = function () {
     event.preventDefault();
     window.main.mainMapPinRemoveListener();
+    window.main.isActive = false;
+    window.main.setActivityStatus();
     removeFormListeners();
   };
 

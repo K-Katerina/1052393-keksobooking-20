@@ -37,10 +37,11 @@
 
   var setActivityStatusMap = function (active) {
     map.classList.add('map--faded');
-    window.map.removeAdvertisementsOnMap();
     window.map.removeCardOnMap();
     if (active) {
       map.classList.remove('map--faded');
+    } else {
+      window.map.removeAdvertisementsOnMap();
     }
   };
 
@@ -61,7 +62,7 @@
 
   var setAddress = function (coordinateX, coordinateY) {
     var addressInput = document.querySelector('#address');
-    addressInput.value = coordinateX + ' , ' + coordinateY;
+    addressInput.value = Math.round(coordinateX) + ' , ' + Math.round(coordinateY);
   };
 
   setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT / 2);
@@ -78,7 +79,6 @@
     if (evt.button === 0) {
 
       setActivityStatus(true);
-      window.map.removeAdvertisementsOnMap();
 
       var startCoords = {
         x: evt.clientX,
@@ -123,8 +123,9 @@
       var mainMapPinLeftKeyUpMouseHandler = function (upEvt) {
         upEvt.preventDefault();
 
-        window.map.publicAdvertisementsOnMap();
         setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT + MAIN_ARROW_HEIGHT);
+        window.map.removeAdvertisementsOnMap();
+        window.map.publicAdvertisementsOnMap();
 
         document.removeEventListener('mousemove', mainMapPinLeftKeyMoveMouseHandler);
         document.removeEventListener('mouseup', mainMapPinLeftKeyUpMouseHandler);

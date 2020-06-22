@@ -5,10 +5,16 @@
   var MAIN_PIN_WIDTH = 65;
   var MAIN_PIN_HEIGHT = 65;
   var MAIN_ARROW_HEIGHT = 18;
+  var DEFAULT_MAIN_PIN_X = 570;
+  var DEFAULT_MAIN_PIN_Y = 375;
 
   var HALF_MAIN_PIN_WIDTH = MAIN_PIN_WIDTH / 2;
 
   var isActive = false;
+
+  var setActive = function (active) {
+    isActive = active;
+  };
 
   var setDisabledForAll = function (array, disabled) {
     for (var i = 0; i < array.length; i++) {
@@ -42,7 +48,7 @@
     window.map.removeCardOnMap();
     if (isActive) {
       map.classList.remove('map--faded');
-      window.map.publicAdvertisementsOnMap();
+      window.map.loadData();
     } else {
       window.map.removeAdvertisementsOnMap();
     }
@@ -148,8 +154,14 @@
   mapPin.addEventListener('keydown', mainMapPinEnterHandler);
   mapPin.addEventListener('mousedown', mainMapPinLeftKeyDownMouseHandler);
 
+  var setDefaultCoordsMainMapPin = function () {
+    mapPin.style = 'left: ' + DEFAULT_MAIN_PIN_X + 'px; top: ' + DEFAULT_MAIN_PIN_Y + 'px;';
+    setAddress(DEFAULT_MAIN_PIN_X + MAIN_PIN_WIDTH / 2, DEFAULT_MAIN_PIN_Y + MAIN_PIN_HEIGHT / 2);
+  };
+
   window.main = {
-    isActive: isActive,
+    setActive: setActive,
+    setDefaultCoordsMainMapPin: setDefaultCoordsMainMapPin,
     mainMapPinRemoveListener: mainMapPinRemoveListener,
     setActivityStatus: setActivityStatus
   };

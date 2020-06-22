@@ -5,26 +5,54 @@
   var BLOCK_COORDINATE_Y = 130;
   var BLOCK_HEIGHT = 500;
   var RADIX = 10;
+  var TIMEOUT = 3000;
 
   var similarListElement = document.querySelector('.map__pins');
 
   var getBlockWidth = function () {
     return Number.parseInt(getComputedStyle(similarListElement).width, RADIX);
-
   };
+
   var blockWidth = getBlockWidth();
 
-  var URL = 'https://javascript.pages.academy/keksobooking/data';
+  // var forPost = function () {
+  //   var main = document.querySelector('main');
+  //
+  //   var successTemplate = document.querySelector('#success').content.querySelector('div');
+  //   successTemplate.querySelector('.success__message').textContent = 'Данные успешно получены';
+  //   main.appendChild(successTemplate);
+  //
+  //   var errorTemplate = document.querySelector('#error').cloneNode(true);
+  //   errorTemplate.querySelector('.error__message').textContent = 'Ошибка';
+  //   main.appendChild(errorTemplate);
+  // };
+
+  var onError = function (message) {
+    var divError = document.createElement('div');
+    divError.textContent = 'Произошла ошибка. ' + message;
+    map.insertAdjacentElement('afterbegin', divError);
+    setTimeout(function () {
+      divError.remove();
+    }, TIMEOUT);
+  };
+
+  var onSuccess = function (data) {
+    advertisementList = data;
+    publicAdvertisementsOnMap();
+  };
+
   var advertisementList = [];
 
-  window.server.get(URL, function (evt) {
-    advertisementList = evt.target.response;
-  });
+  var loadData = function () {
+    window.server.get(onSuccess, onError);
+  };
 
   var publicAdvertisementsOnMap = function () {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < advertisementList.length; i++) {
-      fragment.appendChild(window.pin.renderMapPin(advertisementList[i]));
+      if (advertisementList[i].offer) {
+        fragment.appendChild(window.pin.renderMapPin(advertisementList[i]));
+      }
     }
     similarListElement.appendChild(fragment);
   };
@@ -61,6 +89,7 @@
       card.remove();
       closeCardBtn.removeEventListener('click', closeBtnClickHandler);
       document.removeEventListener('keydown', escDownHandler);
+      document.querySelector('.map__pin--active').classList.remove('map__pin--active');
     };
   };
 
@@ -74,6 +103,7 @@
     BLOCK_COORDINATE_Y: BLOCK_COORDINATE_Y,
     BLOCK_HEIGHT: BLOCK_HEIGHT,
     blockWidth: blockWidth,
+    loadData: loadData,
     publicAdvertisementsOnMap: publicAdvertisementsOnMap,
     removeAdvertisementsOnMap: removeAdvertisementsOnMap,
     publicCardOnMap: publicCardOnMap,

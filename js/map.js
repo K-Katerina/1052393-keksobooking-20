@@ -15,19 +15,7 @@
 
   var blockWidth = getBlockWidth();
 
-  // var forPost = function () {
-  //   var main = document.querySelector('main');
-  //
-  //   var successTemplate = document.querySelector('#success').content.querySelector('div');
-  //   successTemplate.querySelector('.success__message').textContent = 'Данные успешно получены';
-  //   main.appendChild(successTemplate);
-  //
-  //   var errorTemplate = document.querySelector('#error').cloneNode(true);
-  //   errorTemplate.querySelector('.error__message').textContent = 'Ошибка';
-  //   main.appendChild(errorTemplate);
-  // };
-
-  var onError = function (message) {
+  var onErrorLoad = function (message) {
     var divError = document.createElement('div');
     divError.textContent = 'Произошла ошибка. ' + message;
     map.insertAdjacentElement('afterbegin', divError);
@@ -36,7 +24,7 @@
     }, TIMEOUT);
   };
 
-  var onSuccess = function (data) {
+  var onSuccessLoad = function (data) {
     advertisementList = data;
     publicAdvertisementsOnMap();
   };
@@ -44,7 +32,7 @@
   var advertisementList = [];
 
   var loadData = function () {
-    window.server.get(onSuccess, onError);
+    window.server.get(onSuccessLoad, onErrorLoad);
   };
 
   var publicAdvertisementsOnMap = function () {

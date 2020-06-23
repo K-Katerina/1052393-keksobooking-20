@@ -4,7 +4,8 @@
 
   var TIMEOUT = 5000;
   var STATUS_OK = 200;
-  var URL = 'https://javascript.pages.academy/keksobooking/data';
+  var URL_GET = 'https://javascript.pages.academy/keksobooking/data';
+  var URL_POST = 'https://javascript.pages.academy/keksobooking';
 
   var createXhr = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
@@ -15,7 +16,7 @@
       if (xhr.status === STATUS_OK) {
         onSuccess(xhr.response);
       } else {
-        onError('Статус ответа: ' + xhr.status + xhr.statusText);
+        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
 
@@ -32,12 +33,18 @@
 
   var get = function (onSuccess, onError) {
     var xhr = createXhr(onSuccess, onError);
-    xhr.open('GET', URL);
+    xhr.open('GET', URL_GET);
     xhr.send();
+  };
+
+  var post = function (data, onSuccess, onError) {
+    var xhr = createXhr(onSuccess, onError);
+    xhr.open('POST', URL_POST);
+    xhr.send(data);
   };
 
   window.server = {
     get: get,
-    // post: performPost
+    post: post
   };
 })();

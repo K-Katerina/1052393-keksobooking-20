@@ -5,10 +5,16 @@
   var MAIN_PIN_WIDTH = 65;
   var MAIN_PIN_HEIGHT = 65;
   var MAIN_ARROW_HEIGHT = 18;
+  var DEFAULT_MAIN_PIN_X = 570;
+  var DEFAULT_MAIN_PIN_Y = 375;
 
   var HALF_MAIN_PIN_WIDTH = MAIN_PIN_WIDTH / 2;
 
   var isActive = false;
+
+  var setActive = function (active) {
+    isActive = active;
+  };
 
   var setDisabledForAll = function (array, disabled) {
     for (var i = 0; i < array.length; i++) {
@@ -42,7 +48,7 @@
     window.map.removeCardOnMap();
     if (isActive) {
       map.classList.remove('map--faded');
-      window.map.publicAdvertisementsOnMap();
+      window.map.loadData();
     } else {
       window.map.removeAdvertisementsOnMap();
     }
@@ -72,7 +78,12 @@
 
   var mainMapPinEnterHandler = function (evt) {
     if (evt.key === 'Enter') {
-      setActivityStatus();
+
+      if (!isActive) {
+        isActive = true;
+        setActivityStatus();
+      }
+
       setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT + MAIN_ARROW_HEIGHT);
     }
   };
@@ -110,10 +121,10 @@
         };
 
         var limit = {
-          TOP: window.data.BLOCK_COORDINATE_Y - mapPin.offsetHeight - MAIN_ARROW_HEIGHT,
-          BOTTOM: window.data.BLOCK_HEIGHT + MAIN_ARROW_HEIGHT,
+          TOP: window.map.BLOCK_COORDINATE_Y - mapPin.offsetHeight - MAIN_ARROW_HEIGHT,
+          BOTTOM: window.map.BLOCK_HEIGHT + MAIN_ARROW_HEIGHT,
           LEFT: -HALF_MAIN_PIN_WIDTH,
-          RIGHT: window.data.blockWidth - mapPin.offsetWidth + HALF_MAIN_PIN_WIDTH
+          RIGHT: window.map.blockWidth - mapPin.offsetWidth + HALF_MAIN_PIN_WIDTH
         };
 
         if (mapPinPosition.x > limit.LEFT && mapPinPosition.x < limit.RIGHT) {
@@ -143,9 +154,15 @@
   mapPin.addEventListener('keydown', mainMapPinEnterHandler);
   mapPin.addEventListener('mousedown', mainMapPinLeftKeyDownMouseHandler);
 
+  var setDefaultCoordsMainMapPin = function () {
+    mapPin.style = 'left: ' + DEFAULT_MAIN_PIN_X + 'px; top: ' + DEFAULT_MAIN_PIN_Y + 'px;';
+    setAddress(DEFAULT_MAIN_PIN_X + MAIN_PIN_WIDTH / 2, DEFAULT_MAIN_PIN_Y + MAIN_PIN_HEIGHT / 2);
+  };
+
   window.main = {
+    setActive: setActive,
+    setDefaultCoordsMainMapPin: setDefaultCoordsMainMapPin,
     mainMapPinRemoveListener: mainMapPinRemoveListener,
-    isActive: isActive,
     setActivityStatus: setActivityStatus
   };
 })();

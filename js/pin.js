@@ -19,6 +19,11 @@
       if (mapCardRemovable) {
         mapCardRemovable.remove();
       }
+      var allMapPinActiveRemovable = document.querySelectorAll('.map__pin--active');
+      for (var i = 0; i < allMapPinActiveRemovable.length; i++) {
+        allMapPinActiveRemovable[i].classList.remove('map__pin--active');
+      }
+      advertisement.classList.add('map__pin--active');
       window.map.publicCardOnMap(advertisementItem);
     };
 
@@ -27,6 +32,6 @@
   };
 
   window.pin = {
-    renderMapPin: renderMapPin,
+    renderMapPin: renderMapPin
   };
 })();

@@ -18,6 +18,7 @@
   var avatarChooser = document.querySelector('#avatar');
   var imageChooser = document.querySelector('#images');
   var submitBtn = document.querySelector('.ad-form__submit');
+  var resetBtn = document.querySelector('.ad-form__reset');
 
   priceInput.value = DEFAULT_MIN_PRICE;
 
@@ -80,7 +81,7 @@
   };
 
   var getMinPrice = function (value) {
-    return window.data.BUILDING_MAP[value];
+    return window.utils.BUILDING_MAP[value];
   };
 
   var typeChangeHandler = function () {
@@ -114,12 +115,29 @@
     }
   };
 
-  var btnSubmitHandler = function () {
-    event.preventDefault();
-    window.main.mainMapPinRemoveListener();
-    window.main.isActive = false;
+  var initialState = function () {
+    setDefaultStateForm();
+    window.main.setActive(false);
     window.main.setActivityStatus();
-    removeFormListeners();
+    window.main.setDefaultCoordsMainMapPin();
+    window.scrollTo(0, 0);
+  };
+
+  var btnSubmitHandler = function (evt) {
+    evt.preventDefault();
+    initialState();
+  };
+
+  var btnResetHandler = function (evt) {
+    evt.preventDefault();
+    initialState();
+  };
+
+  var setDefaultStateForm = function () {
+    adForm.reset();
+    fillRoomsAndCapacities();
+    fillCapacity(document.querySelector('#room_number option').value);
+    priceInput.value = DEFAULT_MIN_PRICE;
   };
 
   var addFormListeners = function () {
@@ -133,6 +151,7 @@
     submitBtn.addEventListener('submit', btnSubmitHandler);
     roomSelect.addEventListener('change', roomChangeHandler);
     capacitySelect.addEventListener('invalid', capacityInvalidHandler);
+    resetBtn.addEventListener('click', btnResetHandler);
   };
 
   var removeFormListeners = function () {

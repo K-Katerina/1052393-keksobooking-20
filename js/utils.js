@@ -10,7 +10,13 @@
   var TWO_ROOMS = 2;
   var THREE_ROOMS = 3;
   var HUNDRED_ROOMS = 100;
-  var NUMBER_OF_PINS = 8;
+
+  var BUILDING_MAP = {
+    'palace': 10000,
+    'flat': 1000,
+    'house': 5000,
+    'bungalo': 0
+  };
 
   var dictionaryCapacities = [
     {
@@ -50,26 +56,6 @@
     'conditioner': 'Кондиционер'
   };
 
-  var getRandomNumberOfRange = function (a, b) {
-    return Math.round(a + Math.random() * (b - a));
-  };
-
-  var getRandomArray = function (array) {
-    return shuffle(array).slice(0, getRandomNumberOfRange(0, array.length));
-  };
-
-  var randomNumber = getRandomNumberOfRange(1, NUMBER_OF_PINS);
-
-  var shuffle = function (array) {
-    for (var i = array.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var buffer = array[i];
-      array[i] = array[j];
-      array[j] = buffer;
-    }
-    return array;
-  };
-
   var getWordForm = function (n, array) {
     var modN = n % 10;
     if (n > 10 && n < 21) {
@@ -93,14 +79,10 @@
   };
 
   window.utils = {
+    BUILDING_MAP: BUILDING_MAP,
     mapRooms: mapRooms,
     translationToRu: translationToRu,
-    getRandomNumberOfRange: getRandomNumberOfRange,
-    getRandomArray: getRandomArray,
-    randomNumber: randomNumber,
-    shuffle: shuffle,
     getWordForm: getWordForm,
-    arrayToString: arrayToString,
-    NUMBER_OF_PINS: NUMBER_OF_PINS
+    arrayToString: arrayToString
   };
 })();

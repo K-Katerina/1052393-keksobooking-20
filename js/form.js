@@ -18,7 +18,6 @@
   var avatarChooser = document.querySelector('#avatar');
   var imageChooser = document.querySelector('#images');
   var resetBtn = document.querySelector('.ad-form__reset');
-  var main = document.querySelector('main');
 
   priceInput.value = DEFAULT_MIN_PRICE;
 
@@ -33,7 +32,6 @@
 
   var roomChangeHandler = function (evt) {
     fillCapacity(evt.target.value);
-    // capacitySelect.value = null;
   };
 
   var fillRoomsAndCapacities = function () {
@@ -123,57 +121,8 @@
     window.scrollTo(0, 0);
   };
 
-  var onSuccessPost = function () {
-    var successTemplate = document.querySelector('#success').content.cloneNode(true).querySelector('div');
-    successTemplate.querySelector('.success__message').textContent = 'Данные успешно получены';
-    main.appendChild(successTemplate);
-
-    var messegeSuccessClickHandler = function () {
-      successTemplate.remove();
-      successTemplate.removeEventListener('click', messegeSuccessClickHandler);
-    };
-
-    var messegeSuccessEscHandler = function (evt) {
-      if (evt.key === 'Escape') {
-        successTemplate.remove();
-        document.removeEventListener('keydown', messegeSuccessEscHandler);
-      }
-    };
-
-    successTemplate.addEventListener('click', messegeSuccessClickHandler);
-    document.addEventListener('keydown', messegeSuccessEscHandler);
-  };
-
-  var onErrorPost = function (message) {
-    var errorTemplate = document.querySelector('#error').content.cloneNode(true).querySelector('div');
-    errorTemplate.querySelector('.error__message').textContent = 'Ошибка. ' + message;
-    main.appendChild(errorTemplate);
-    var errorBtn = errorTemplate.querySelector('.error__button');
-
-    var messegeErrorClickHandler = function () {
-      errorTemplate.remove();
-      errorTemplate.removeEventListener('click', messegeErrorClickHandler);
-    };
-
-    var messegeErrorEscHandler = function (evt) {
-      if (evt.key === 'Escape') {
-        errorTemplate.remove();
-        document.removeEventListener('keydown', messegeErrorEscHandler);
-      }
-    };
-
-    var messegeErrorBtnClickHandler = function () {
-      errorTemplate.remove();
-      document.removeEventListener('click', messegeErrorBtnClickHandler);
-    };
-
-    errorTemplate.addEventListener('click', messegeErrorClickHandler);
-    document.addEventListener('keydown', messegeErrorEscHandler);
-    errorBtn.addEventListener('click', messegeErrorBtnClickHandler);
-  };
-
   var postData = function (data) {
-    window.server.post(data, onSuccessPost, onErrorPost);
+    window.server.post(data, window.formTemplates.onSuccessPost, window.formTemplates.onErrorPost);
   };
 
   var adFormSubmit = function (evt) {

@@ -17,7 +17,6 @@
   var timeOutInput = adForm.querySelector('#timeout');
   var avatarChooser = document.querySelector('#avatar');
   var imageChooser = document.querySelector('#images');
-  var submitBtn = document.querySelector('.ad-form__submit');
   var resetBtn = document.querySelector('.ad-form__reset');
 
   priceInput.value = DEFAULT_MIN_PRICE;
@@ -33,7 +32,6 @@
 
   var roomChangeHandler = function (evt) {
     fillCapacity(evt.target.value);
-    // capacitySelect.value = null;
   };
 
   var fillRoomsAndCapacities = function () {
@@ -123,8 +121,13 @@
     window.scrollTo(0, 0);
   };
 
-  var btnSubmitHandler = function (evt) {
+  var postData = function (data) {
+    window.server.post(data, window.formTemplates.onSuccessPost, window.formTemplates.onErrorPost);
+  };
+
+  var adFormSubmit = function (evt) {
     evt.preventDefault();
+    postData(new FormData(adForm));
     initialState();
   };
 
@@ -141,6 +144,7 @@
   };
 
   var addFormListeners = function () {
+    adForm.addEventListener('submit', adFormSubmit);
     titleInput.addEventListener('change', titleChangeHandler);
     priceInput.addEventListener('change', priceChangeHandler);
     typeInput.addEventListener('change', typeChangeHandler);
@@ -148,13 +152,13 @@
     timeOutInput.addEventListener('change', timeOutChangeHandler);
     avatarChooser.addEventListener('change', avatarChangeHandler);
     imageChooser.addEventListener('change', imageChangeHandler);
-    submitBtn.addEventListener('submit', btnSubmitHandler);
     roomSelect.addEventListener('change', roomChangeHandler);
     capacitySelect.addEventListener('invalid', capacityInvalidHandler);
     resetBtn.addEventListener('click', btnResetHandler);
   };
 
   var removeFormListeners = function () {
+    adForm.removeEventListener('submit', adFormSubmit);
     capacitySelect.removeEventListener('invalid', capacityInvalidHandler);
     roomSelect.removeEventListener('change', roomChangeHandler);
     titleInput.removeEventListener('change', titleChangeHandler);
@@ -164,7 +168,6 @@
     timeOutInput.removeEventListener('change', timeOutChangeHandler);
     avatarChooser.removeEventListener('change', avatarChangeHandler);
     imageChooser.removeEventListener('change', imageChangeHandler);
-    submitBtn.removeEventListener('click', btnSubmitHandler);
   };
 
   window.form = {

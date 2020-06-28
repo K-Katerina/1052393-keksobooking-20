@@ -19,6 +19,8 @@
     'bungalo': 0
   };
 
+  var DEBOUNCE_INTERVAL = 500;
+
   var dictionaryCapacities = [
     {
       id: NO_GUESTS,
@@ -79,10 +81,25 @@
     return stringOfArray;
   };
 
+  var debounce = function (cb) {
+    var lastTimeout = null;
+
+    return function () {
+      var parameters = arguments;
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(function () {
+        cb.apply(null, parameters);
+      }, DEBOUNCE_INTERVAL);
+    };
+  };
+
   window.utils = {
     BUILDING_MAP: BUILDING_MAP,
     mapRooms: mapRooms,
     translationToRu: translationToRu,
+    debounce: debounce,
     getWordForm: getWordForm,
     arrayToString: arrayToString
   };

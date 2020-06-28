@@ -2,6 +2,8 @@
 
 (function () {
 
+  var ESC_NUM = 'Escape';
+
   var main = document.querySelector('main');
 
   var onSuccessPost = function () {
@@ -14,7 +16,7 @@
     };
 
     var messegeSuccessEscHandler = function (evt) {
-      if (evt.key === 'Escape') {
+      if (evt.key === ESC_NUM) {
         successTemplate.remove();
         document.removeEventListener('keydown', messegeSuccessEscHandler);
       }
@@ -36,7 +38,7 @@
     };
 
     var messegeErrorEscHandler = function (evt) {
-      if (evt.key === 'Escape') {
+      if (evt.key === ESC_NUM) {
         errorTemplate.remove();
         document.removeEventListener('keydown', messegeErrorEscHandler);
       }

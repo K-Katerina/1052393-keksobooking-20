@@ -8,6 +8,8 @@
   var DEFAULT_MAIN_PIN_X = 570;
   var DEFAULT_MAIN_PIN_Y = 375;
 
+  var ENTER_NUM = 'Enter';
+
   var HALF_MAIN_PIN_WIDTH = MAIN_PIN_WIDTH / 2;
 
   var isActive = false;
@@ -77,7 +79,7 @@
   setAddress(mapPin.offsetLeft + MAIN_PIN_WIDTH / 2, mapPin.offsetTop + MAIN_PIN_HEIGHT / 2);
 
   var mainMapPinEnterHandler = function (evt) {
-    if (evt.key === 'Enter') {
+    if (evt.key === ENTER_NUM) {
       if (!isActive) {
         isActive = true;
         setActivityStatus();

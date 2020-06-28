@@ -7,6 +7,8 @@
   var RADIX = 10;
   var TIMEOUT = 3000;
 
+  var ESC_NUM = 'Escape';
+
   var advertisementList = [];
 
   var similarListElement = document.querySelector('.map__pins');
@@ -15,20 +17,6 @@
   };
 
   var blockWidth = getBlockWidth();
-
-  var filterForm = document.querySelector('.map__filters');
-
-  var filterFormChangeHandler = function () {
-    publicAdvertisementsOnMap(window.advertisementFilter.filter(advertisementList));
-  };
-
-  var addEventListenersFilter = function () {
-    filterForm.addEventListener('change', filterFormChangeHandler);
-  };
-
-  var removeEventListenersFilter = function () {
-    filterForm.removeEventListener('change', filterFormChangeHandler);
-  };
 
   var onErrorLoad = function (message) {
     var divError = document.createElement('div');
@@ -60,7 +48,7 @@
     };
 
     var escDownHandler = function (evt) {
-      if (evt.key === 'Escape') {
+      if (evt.key === ESC_NUM) {
         closeCard();
       }
     };
@@ -100,6 +88,21 @@
     for (var i = 0; i < childrenList.length; i++) {
       childrenList[i].remove();
     }
+  };
+
+  var filterForm = document.querySelector('.map__filters');
+  var debouncePublicAdvertisementsOnMap = window.utils.debounce(publicAdvertisementsOnMap);
+
+  var filterFormChangeHandler = function () {
+    debouncePublicAdvertisementsOnMap(window.advertisementFilter.filter(advertisementList));
+  };
+
+  var addEventListenersFilter = function () {
+    filterForm.addEventListener('change', filterFormChangeHandler);
+  };
+
+  var removeEventListenersFilter = function () {
+    filterForm.removeEventListener('change', filterFormChangeHandler);
   };
 
   window.map = {

@@ -6,6 +6,7 @@
   var TWO_GUESTS = 2;
   var THREE_GUESTS = 3;
   var NO_GUESTS = 0;
+
   var ONE_ROOM = 1;
   var TWO_ROOMS = 2;
   var THREE_ROOMS = 3;

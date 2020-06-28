@@ -7,13 +7,28 @@
   var RADIX = 10;
   var TIMEOUT = 3000;
 
-  var similarListElement = document.querySelector('.map__pins');
+  var advertisementList = [];
 
+  var similarListElement = document.querySelector('.map__pins');
   var getBlockWidth = function () {
     return Number.parseInt(getComputedStyle(similarListElement).width, RADIX);
   };
 
   var blockWidth = getBlockWidth();
+
+  var filterForm = document.querySelector('.map__filters');
+
+  var filterFormChangeHandler = function () {
+    publicAdvertisementsOnMap(window.advertisementFilter.filter(advertisementList));
+  };
+
+  var addEventListenersFilter = function () {
+    filterForm.addEventListener('change', filterFormChangeHandler);
+  };
+
+  var removeEventListenersFilter = function () {
+    filterForm.removeEventListener('change', filterFormChangeHandler);
+  };
 
   var onErrorLoad = function (message) {
     var divError = document.createElement('div');
@@ -26,31 +41,12 @@
 
   var onSuccessLoad = function (data) {
     advertisementList = data;
-    publicAdvertisementsOnMap();
+    publicAdvertisementsOnMap(window.advertisementFilter.filter(data.slice(0, data.length)));
+    window.main.setActivityStatusMapFiltres();
   };
-
-  var advertisementList = [];
 
   var loadData = function () {
     window.server.get(onSuccessLoad, onErrorLoad);
-  };
-
-  var publicAdvertisementsOnMap = function () {
-    var fragment = document.createDocumentFragment();
-    for (var i = 0; i < advertisementList.length; i++) {
-      if (advertisementList[i].offer) {
-        fragment.appendChild(window.pin.renderMapPin(advertisementList[i]));
-      }
-    }
-    similarListElement.appendChild(fragment);
-  };
-
-  var removeAdvertisementsOnMap = function () {
-    advertisementList = [];
-    var childrenList = similarListElement.querySelectorAll('button[type=button]');
-    for (var i = 0; i < childrenList.length; i++) {
-      childrenList[i].remove();
-    }
   };
 
   var map = document.querySelector('.map');
@@ -87,12 +83,32 @@
     }
   };
 
+  var publicAdvertisementsOnMap = function (advertisements) {
+    removeAdvertisementsOnMap();
+    removeCardOnMap();
+    var fragment = document.createDocumentFragment();
+    for (var i = 0; i < advertisements.length; i++) {
+      if (advertisements[i].offer) {
+        fragment.appendChild(window.pin.renderMapPin(advertisements[i]));
+      }
+    }
+    similarListElement.appendChild(fragment);
+  };
+
+  var removeAdvertisementsOnMap = function () {
+    var childrenList = similarListElement.querySelectorAll('button[type=button]');
+    for (var i = 0; i < childrenList.length; i++) {
+      childrenList[i].remove();
+    }
+  };
+
   window.map = {
     BLOCK_COORDINATE_Y: BLOCK_COORDINATE_Y,
     BLOCK_HEIGHT: BLOCK_HEIGHT,
     blockWidth: blockWidth,
     loadData: loadData,
-    publicAdvertisementsOnMap: publicAdvertisementsOnMap,
+    addEventListenersFilter: addEventListenersFilter,
+    removeEventListenersFilter: removeEventListenersFilter,
     removeAdvertisementsOnMap: removeAdvertisementsOnMap,
     publicCardOnMap: publicCardOnMap,
     removeCardOnMap: removeCardOnMap

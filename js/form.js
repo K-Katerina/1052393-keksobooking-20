@@ -15,8 +15,6 @@
   var typeInput = adForm.querySelector('#type');
   var timeInInput = adForm.querySelector('#timein');
   var timeOutInput = adForm.querySelector('#timeout');
-  var avatarChooser = document.querySelector('#avatar');
-  var imageChooser = document.querySelector('#images');
   var resetBtn = document.querySelector('.ad-form__reset');
 
   priceInput.value = DEFAULT_MIN_PRICE;
@@ -24,9 +22,9 @@
   var fillCapacity = function (room) {
     var capacities = window.utils.mapRooms[room];
     var optionForCapacitySelect = '';
-    for (var i = 0; i < capacities.length; i++) {
-      optionForCapacitySelect += '<option value="' + capacities[i].id + '">' + capacities[i].text + '</option>';
-    }
+    capacities.forEach(function (capacity) {
+      optionForCapacitySelect += '<option value="' + capacity.id + '">' + capacity.text + '</option>';
+    });
     capacitySelect.innerHTML = optionForCapacitySelect;
   };
 
@@ -101,18 +99,6 @@
     }
   };
 
-  var avatarChangeHandler = function () {
-    if (avatarChooser.files[0].type !== 'image/jpeg') {
-      avatarChooser.setCustomValidity('Загрузите изображение');
-    }
-  };
-
-  var imageChangeHandler = function () {
-    if (imageChooser.files[0].type !== 'image/jpeg') {
-      imageChooser.setCustomValidity('Загрузите изображение');
-    }
-  };
-
   var initialState = function () {
     setDefaultStateForm();
     window.main.setActive(false);
@@ -150,11 +136,10 @@
     typeInput.addEventListener('change', typeChangeHandler);
     timeInInput.addEventListener('change', timeInChangeHandler);
     timeOutInput.addEventListener('change', timeOutChangeHandler);
-    avatarChooser.addEventListener('change', avatarChangeHandler);
-    imageChooser.addEventListener('change', imageChangeHandler);
     roomSelect.addEventListener('change', roomChangeHandler);
     capacitySelect.addEventListener('invalid', capacityInvalidHandler);
     resetBtn.addEventListener('click', btnResetHandler);
+    window.loaderImg.addEventListenersFileChooser();
   };
 
   var removeFormListeners = function () {
@@ -166,8 +151,7 @@
     typeInput.removeEventListener('change', typeChangeHandler);
     timeInInput.removeEventListener('change', timeInChangeHandler);
     timeOutInput.removeEventListener('change', timeOutChangeHandler);
-    avatarChooser.removeEventListener('change', avatarChangeHandler);
-    imageChooser.removeEventListener('change', imageChangeHandler);
+    window.loaderImg.removeEventListenersFileChooser();
   };
 
   window.form = {

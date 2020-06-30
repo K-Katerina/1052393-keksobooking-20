@@ -74,10 +74,10 @@
 
   var arrayToString = function (array) {
     var stringOfArray = '';
-    for (var i = 0; i < array.length; i++) {
-      stringOfArray += translationToRu[array[i]];
-      stringOfArray += (i === array.length - 1) ? '. ' : ', ';
-    }
+    array.forEach(function (item, index) {
+      stringOfArray += translationToRu[item];
+      stringOfArray += (index === array.length - 1) ? '. ' : ', ';
+    });
     return stringOfArray;
   };
 

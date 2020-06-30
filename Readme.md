@@ -1,4 +1,4 @@
-# Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
+# Личный проект [«Кексобукинг»](https://k-katerina.github.io/1052393-keksobooking-20/) [![Build status][travis-image]][travis-url]
 
 * Студент: [Катерина Коротышева](https://up.htmlacademy.ru/javascript/20/user/1052393).
 * Наставник: [Дмитрий Железцов](https://htmlacademy.ru/profile/sench).

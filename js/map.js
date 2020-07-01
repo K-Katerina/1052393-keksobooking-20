@@ -30,7 +30,7 @@
   var onSuccessLoad = function (data) {
     advertisementList = data;
     publicAdvertisementsOnMap(window.advertisementFilter.filter(data.slice(0, data.length)));
-    window.main.setActivityStatusMapFiltres();
+    window.main.setActivityStatusMapFilters();
   };
 
   var loadData = function () {

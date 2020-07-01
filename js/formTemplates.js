@@ -10,20 +10,20 @@
     var successTemplate = document.querySelector('#success').content.cloneNode(true).querySelector('div');
     main.appendChild(successTemplate);
 
-    var messegeSuccessClickHandler = function () {
+    var messageSuccessClickHandler = function () {
       successTemplate.remove();
-      successTemplate.removeEventListener('click', messegeSuccessClickHandler);
+      successTemplate.removeEventListener('click', messageSuccessClickHandler);
     };
 
-    var messegeSuccessEscHandler = function (evt) {
+    var messageSuccessEscHandler = function (evt) {
       if (evt.key === ESC_NUM) {
         successTemplate.remove();
-        document.removeEventListener('keydown', messegeSuccessEscHandler);
+        document.removeEventListener('keydown', messageSuccessEscHandler);
       }
     };
 
-    successTemplate.addEventListener('click', messegeSuccessClickHandler);
-    document.addEventListener('keydown', messegeSuccessEscHandler);
+    successTemplate.addEventListener('click', messageSuccessClickHandler);
+    document.addEventListener('keydown', messageSuccessEscHandler);
   };
 
   var onErrorPost = function (message) {
@@ -32,26 +32,26 @@
     main.appendChild(errorTemplate);
     var errorBtn = errorTemplate.querySelector('.error__button');
 
-    var messegeErrorClickHandler = function () {
+    var messageErrorClickHandler = function () {
       errorTemplate.remove();
-      errorTemplate.removeEventListener('click', messegeErrorClickHandler);
+      errorTemplate.removeEventListener('click', messageErrorClickHandler);
     };
 
-    var messegeErrorEscHandler = function (evt) {
+    var messageErrorEscHandler = function (evt) {
       if (evt.key === ESC_NUM) {
         errorTemplate.remove();
-        document.removeEventListener('keydown', messegeErrorEscHandler);
+        document.removeEventListener('keydown', messageErrorEscHandler);
       }
     };
 
-    var messegeErrorBtnClickHandler = function () {
+    var messageErrorBtnClickHandler = function () {
       errorTemplate.remove();
-      document.removeEventListener('click', messegeErrorBtnClickHandler);
+      document.removeEventListener('click', messageErrorBtnClickHandler);
     };
 
-    errorTemplate.addEventListener('click', messegeErrorClickHandler);
-    document.addEventListener('keydown', messegeErrorEscHandler);
-    errorBtn.addEventListener('click', messegeErrorBtnClickHandler);
+    errorTemplate.addEventListener('click', messageErrorClickHandler);
+    document.addEventListener('keydown', messageErrorEscHandler);
+    errorBtn.addEventListener('click', messageErrorBtnClickHandler);
   };
 
   window.formTemplates = {

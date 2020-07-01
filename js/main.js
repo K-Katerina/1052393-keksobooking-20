@@ -9,6 +9,7 @@
   var DEFAULT_MAIN_PIN_Y = 375;
 
   var ENTER_NUM = 'Enter';
+  var LEFT_KEY_NUM = 0;
 
   var HALF_MAIN_PIN_WIDTH = MAIN_PIN_WIDTH / 2;
 
@@ -38,9 +39,9 @@
     }
   };
 
-  var setActivityStatusMapFiltres = function () {
-    var childrenMapFiltres = document.querySelector('.map__filters').children;
-    setDisabledForAll(childrenMapFiltres, !isActive);
+  var setActivityStatusMapFilters = function () {
+    var childrenMapFilters = document.querySelector('.map__filters').children;
+    setDisabledForAll(childrenMapFilters, !isActive);
     if (isActive) {
       window.map.addEventListenersFilter();
     } else {
@@ -58,7 +59,7 @@
       window.map.loadData();
     } else {
       window.map.removeAdvertisementsOnMap();
-      setActivityStatusMapFiltres();
+      setActivityStatusMapFilters();
     }
   };
 
@@ -90,7 +91,7 @@
 
   var mainMapPinLeftKeyDownMouseHandler = function (evt) {
     evt.preventDefault();
-    if (evt.button === 0) {
+    if (evt.button === LEFT_KEY_NUM) {
       if (!isActive) {
         isActive = true;
         setActivityStatus();
@@ -151,7 +152,7 @@
 
   window.main = {
     setActive: setActive,
-    setActivityStatusMapFiltres: setActivityStatusMapFiltres,
+    setActivityStatusMapFilters: setActivityStatusMapFilters,
     setDefaultCoordsMainMapPin: setDefaultCoordsMainMapPin,
     setActivityStatus: setActivityStatus
   };

@@ -75,19 +75,19 @@
     removeAdvertisementsOnMap();
     removeCardOnMap();
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < advertisements.length; i++) {
-      if (advertisements[i].offer) {
-        fragment.appendChild(window.pin.renderMapPin(advertisements[i]));
+    advertisements.forEach(function (advertisement) {
+      if (advertisement.offer) {
+        fragment.appendChild(window.pin.renderMapPin(advertisement));
       }
-    }
+    });
     similarListElement.appendChild(fragment);
   };
 
   var removeAdvertisementsOnMap = function () {
     var childrenList = similarListElement.querySelectorAll('button[type=button]');
-    for (var i = 0; i < childrenList.length; i++) {
-      childrenList[i].remove();
-    }
+    childrenList.forEach(function (item) {
+      item.remove();
+    });
   };
 
   var filterForm = document.querySelector('.map__filters');
@@ -102,6 +102,7 @@
   };
 
   var removeEventListenersFilter = function () {
+    filterForm.reset();
     filterForm.removeEventListener('change', filterFormChangeHandler);
   };
 

@@ -7,11 +7,11 @@
   var createPhotosFragment = function (array) {
     var photosFragment = document.createDocumentFragment();
     var popupPhoto = similarCardTemplate.querySelector('.popup__photo');
-    for (var i = 0; i < array.length; i++) {
+    array.forEach(function (item) {
       var element = popupPhoto.cloneNode(true);
-      element.src = array[i];
+      element.src = item;
       photosFragment.appendChild(element);
-    }
+    });
     return photosFragment;
   };
 
